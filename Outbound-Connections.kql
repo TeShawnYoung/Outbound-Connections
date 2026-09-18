@@ -1,5 +1,4 @@
 DeviceNetworkEvents
-| where Timestamp {TimeRange}
 | where RemoteIPType == "Public" and isnotempty(RemoteIP)
 | where isempty(RemoteUrl) or RemoteUrl !endswith "microsoft.com"
 | where isempty(RemoteUrl) or RemoteUrl !endswith "windows.com"
