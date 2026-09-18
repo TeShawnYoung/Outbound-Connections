@@ -20,7 +20,7 @@ The primary objective was to build a geographic visualization that identifies wh
 
 ### Outbound C2 / Beacon Destinations — DeviceNetworkEvents
 
-<img width="1589" height="470" alt="image" src="">
+<img width="1492" height="458" alt="Outbound-Connections" src="https://github.com/user-attachments/assets/da06aad3-826f-4a35-8460-831837c85524" />
 
 #### The KQL Query
 
