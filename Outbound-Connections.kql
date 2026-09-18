@@ -1,1 +1,31 @@
 
+
+DeviceNetworkEvents
+| where Timestamp {TimeRange}
+| where RemoteIPType == "Public" and isnotempty(RemoteIP)
+| where isempty(RemoteUrl) or RemoteUrl !endswith "microsoft.com"
+| where isempty(RemoteUrl) or RemoteUrl !endswith "windows.com"
+| where isempty(RemoteUrl) or RemoteUrl !endswith "windowsupdate.com"
+| where isempty(RemoteUrl) or RemoteUrl !endswith "azure.com"
+| where isempty(RemoteUrl) or RemoteUrl !endswith "office.com"
+| where isempty(RemoteUrl) or RemoteUrl !endswith "msftncsi.com"
+| extend geo = geo_info_from_ip_address(RemoteIP)
+| extend Latitude  = toreal(geo.latitude),
+        Longitude = toreal(geo.longitude),
+        Country   = tostring(geo.country),
+        State     = tostring(geo.state),
+        City      = tostring(geo.city)
+| where isnotempty(Latitude) and isnotempty(Longitude)
+| summarize Connections = count(),
+           Devices     = dcount(DeviceName),
+           Processes   = make_set(InitiatingProcessFileName, 25),
+           Ports       = make_set(RemotePort, 15),
+           SampleUrl   = take_any(RemoteUrl)
+        by RemoteIP, Country, State, City, Latitude, Longitude
+| where Connections >= 5
+| extend MapLabel = strcat(SampleUrl, " (", City, ", ", State, ", ", Country, ") — ", Devices, " devices")
+| project Latitude, Longitude, MapLabel, Devices, Connections, Processes, Ports, SampleUrl, RemoteIP, Country, State, City
+| order by Devices desc, Connections desc
+
+
+
